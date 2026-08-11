@@ -197,6 +197,11 @@ body {
   margin: 0 auto 1.25rem;
 }
 
+/* Section break before the featured 5th cocktail (The Red Dose) */
+.divider--section {
+  margin: 0.5rem auto 2.5rem;
+}
+
 /* ---------------------------------------------------------
    COCKTAIL SECTIONS
    Mobile-first: a single vertical column of drinks separated
@@ -219,6 +224,13 @@ body {
 }
 
 .cocktail:last-child {
+  border-bottom: none;
+}
+
+/* Item 4 sits directly above the section divider that
+   introduces the featured 5th cocktail, so it skips its own
+   rule to avoid a doubled-up line right before the divider. */
+.cocktail:nth-of-type(4) {
   border-bottom: none;
 }
 
@@ -290,6 +302,33 @@ body {
 }
 
 /* ---------------------------------------------------------
+   FEATURED COCKTAIL (The Red Dose)
+   Same card structure as the rest of the menu, with a
+   restrained frame and a small "Interactive Serve" mark —
+   enough emphasis to signal its presentation without
+   breaking the shared Club 24 visual language.
+   --------------------------------------------------------- */
+.cocktail--featured {
+  padding: 2.25rem 1.5rem;
+  border: 1px solid rgba(213, 138, 58, 0.25);
+  background: radial-gradient(ellipse at 50% 0%, rgba(213, 138, 58, 0.07), transparent 70%);
+}
+
+.cocktail__badge {
+  display: inline-block;
+  margin: 1rem 0 0;
+  padding: 0.4em 0.95em;
+  border: 1px solid rgba(200, 165, 106, 0.5);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* ---------------------------------------------------------
    FOOTER
    --------------------------------------------------------- */
 .menu-footer {
@@ -342,10 +381,33 @@ body {
     padding: 2.5rem 0;
   }
 
-  /* Remove the bottom rule from the last item in each row
-     rather than only the last item overall. */
-  .cocktail:nth-last-child(-n+2) {
+  /* Cocktails 01–04 form a balanced two-column grid; item 03
+     also drops its rule here since it sits in the grid's last
+     row (item 04 already loses its rule at all widths). */
+  .cocktail:nth-of-type(3) {
     border-bottom: none;
+  }
+
+  /* The section divider and item 05 (The Red Dose) span both
+     columns and center underneath the 01–04 grid, so five
+     cocktails read as one intentional layout instead of a
+     lopsided 2x2-plus-one grid. */
+  .cocktail-list > .divider,
+  .cocktail--featured {
+    grid-column: 1 / -1;
+  }
+
+  .cocktail--featured {
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Description keeps its readable measure but centers as a
+     block instead of hugging the left edge of the card. */
+  .cocktail--featured .cocktail__description {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* Restrained desktop-only hover interaction: the drink
@@ -354,6 +416,12 @@ body {
   .cocktail:hover .cocktail__name {
     color: var(--color-amber);
     transform: translateX(3px);
+  }
+
+  /* The featured card is centered, so it warms in color on
+     hover without the horizontal shift used elsewhere. */
+  .cocktail--featured:hover .cocktail__name {
+    transform: none;
   }
 }
 
