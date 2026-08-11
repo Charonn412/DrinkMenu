@@ -552,11 +552,9 @@ body {
     padding: 2.5rem 0;
   }
 
-  /* Remove the bottom rule from the last row of the two-column
-     grid rather than only the last item overall. */
-  .cocktail:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
+  /* With five items in the two-column grid, only the final row
+     (item 5, alone in column 1) should lose its bottom rule —
+     the base :last-child rule already covers that. */
 
   /* Restrained desktop-only hover interaction: the drink
      name shifts slightly and warms in color — nothing bouncy
