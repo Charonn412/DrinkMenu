@@ -1,0 +1,364 @@
+/* =========================================================
+   CLUB 24 — SIGNATURE COCKTAIL MENU
+   A single-page, mobile-first digital menu styled after a
+   dim, intimate jazz-lounge cocktail list.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   COLORS
+   CSS custom properties so the palette can be tuned in one
+   place. Values pulled from the moody jazz-lounge palette:
+   deep near-black burgundy backgrounds, burnt orange /
+   amber / muted gold accents, cream text.
+   --------------------------------------------------------- */
+:root {
+  --color-bg-darkest: #190B0B;   /* base page background */
+  --color-bg-mid: #2A0F0F;       /* gradient / panel background */
+  --color-bg-deep-red: #451515;  /* gradient accent */
+  --color-burgundy: #641F1F;     /* borders, dividers, panels */
+  --color-burnt-orange: #A84624; /* accent / hover */
+  --color-amber: #D58A3A;        /* accent glow, numbers, links */
+  --color-gold: #C8A56A;         /* dividers, small ornaments */
+  --color-cream: #F3E8D2;        /* primary headings/text */
+  --color-cream-muted: #CDBFA8;  /* secondary/body text */
+  --color-black: #0A0807;        /* deepest shadow tone */
+
+  /* ---------------------------------------------------------
+     TYPOGRAPHY
+     Display serif for the brand mark and cocktail names,
+     clean sans for supporting copy — a refined vintage pair.
+     --------------------------------------------------------- */
+  --font-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  /* ---------------------------------------------------------
+     LAYOUT
+     Shared spacing / sizing tokens.
+     --------------------------------------------------------- */
+  --menu-max-width: 880px;
+  --edge-padding: 1.5rem;
+}
+
+/* ---------------------------------------------------------
+   RESET / BASE
+   --------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--color-bg-darkest);
+  color: var(--color-cream-muted);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  /* Layered radial gradients create a low, warm glow drifting
+     up from the center-bottom of the page, like lounge lighting,
+     without becoming a busy or distracting background. */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 8%, rgba(213, 138, 58, 0.14), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(168, 70, 36, 0.16), transparent 65%),
+    radial-gradient(ellipse 100% 60% at 50% 50%, var(--color-bg-deep-red), var(--color-bg-darkest) 70%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Subtle vignette: darkens the far edges of the viewport so
+   the content reads as the illuminated center of a dim room. */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 120% 100% at 50% 50%, transparent 55%, rgba(10, 8, 7, 0.55) 100%);
+}
+
+/* Faint grain/noise layer for texture, built entirely from
+   CSS (no image asset) using stacked, offset radial dots. */
+.grain {
+  position: fixed;
+  inset: -10%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.05;
+  background-image:
+    radial-gradient(rgba(243, 232, 210, 0.9) 0.5px, transparent 0.5px),
+    radial-gradient(rgba(243, 232, 210, 0.9) 0.5px, transparent 0.5px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 2px 3px;
+}
+
+/* ---------------------------------------------------------
+   MENU CONTAINER
+   Narrow, centered column so the page reads as a printed
+   menu rather than a wide dashboard, even on desktop.
+   --------------------------------------------------------- */
+.menu {
+  position: relative;
+  z-index: 2;
+  max-width: var(--menu-max-width);
+  margin: 0 auto;
+  padding: 3.5rem var(--edge-padding) 3rem;
+}
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+.menu-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.menu-header__eyebrow {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.menu-header__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3rem, 14vw, 4.75rem);
+  letter-spacing: 0.06em;
+  color: var(--color-cream);
+  text-shadow: 0 0 28px rgba(213, 138, 58, 0.25);
+}
+
+.menu-header__subtitle {
+  margin: 1.25rem 0 0.25rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--color-cream-muted);
+}
+
+.menu-header__tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  color: var(--color-amber);
+}
+
+/* ---------------------------------------------------------
+   DECORATIVE DIVIDER
+   A thin gold rule with a small centered ornamental mark —
+   restrained, not a flourish-heavy graphic.
+   --------------------------------------------------------- */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 220px;
+  margin: 1.5rem auto;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold));
+}
+
+.divider::after {
+  background: linear-gradient(90deg, var(--color-gold), transparent);
+}
+
+.divider span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  margin: 0 0.75rem;
+  border-radius: 50%;
+  background: var(--color-amber);
+  box-shadow: 0 0 6px rgba(213, 138, 58, 0.7);
+}
+
+.divider--small {
+  max-width: 120px;
+  margin: 0 auto 1.25rem;
+}
+
+/* ---------------------------------------------------------
+   COCKTAIL SECTIONS
+   Mobile-first: a single vertical column of drinks separated
+   by fine rules rather than boxed "cards" — reads as one
+   continuous printed menu.
+   --------------------------------------------------------- */
+.cocktail-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.cocktail {
+  position: relative;
+  padding: 2.25rem 0;
+  border-bottom: 1px solid rgba(200, 165, 106, 0.18);
+}
+
+.cocktail:first-child {
+  padding-top: 0;
+}
+
+.cocktail:last-child {
+  border-bottom: none;
+}
+
+.cocktail__number {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--color-burnt-orange);
+  opacity: 0.85;
+}
+
+.cocktail__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.65rem, 5.5vw, 2.1rem);
+  letter-spacing: 0.015em;
+  color: var(--color-cream);
+  display: inline-block;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.cocktail__type {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-amber);
+}
+
+.cocktail__ingredients {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--color-cream-muted);
+  opacity: 0.85;
+}
+
+.cocktail__description {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-cream-muted);
+  max-width: 34ch;
+}
+
+.cocktail__meta {
+  margin: 1.1rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cream-muted);
+  opacity: 0.6;
+}
+
+.cocktail__meta .dot {
+  margin: 0 0.5em;
+  color: var(--color-burgundy);
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------- */
+.menu-footer {
+  margin-top: 3.5rem;
+  text-align: center;
+}
+
+.menu-footer__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.menu-footer__note {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--color-cream-muted);
+  opacity: 0.55;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE RULES
+   Small screens (iPhone-class) get the single-column layout
+   defined above by default. From tablet width up, the list
+   moves to a tasteful two-column arrangement while the outer
+   container stays narrow enough to still read as a menu.
+   --------------------------------------------------------- */
+@media (min-width: 700px) {
+  .menu {
+    padding: 5rem 2.5rem 4rem;
+  }
+
+  .menu-header {
+    margin-bottom: 4.5rem;
+  }
+
+  .cocktail-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 3.5rem;
+  }
+
+  .cocktail {
+    padding: 2.5rem 0;
+  }
+
+  /* Remove the bottom rule from the last item in each row
+     rather than only the last item overall. */
+  .cocktail:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+
+  /* Restrained desktop-only hover interaction: the drink
+     name shifts slightly and warms in color, and its divider
+     glow strengthens — nothing bouncy or playful. */
+  .cocktail:hover .cocktail__name {
+    color: var(--color-amber);
+    transform: translateX(3px);
+  }
+}
+
+@media (min-width: 1000px) {
+  :root {
+    --menu-max-width: 940px;
+  }
+}
