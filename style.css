@@ -342,6 +342,12 @@ body {
     padding: 2.5rem 0;
   }
 
+  /* Remove the bottom rule from the last row of the two-column
+     grid rather than only the last item overall. */
+  .cocktail:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+
   /* Restrained desktop-only hover interaction: the drink
      name shifts slightly and warms in color, and its divider
      glow strengthens — nothing bouncy or playful. */
