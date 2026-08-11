@@ -77,12 +77,18 @@ body {
 
 /* ---------------------------------------------------------
    AMBIENT LIGHT
-   Three large, heavily blurred blobs drifting extremely slowly
-   behind the menu, like warm light from a lamp or small stage
-   reaching different parts of a dark room. Only transform and
-   opacity are animated (no blur/size animation) so the browser
-   can composite each blob on its own GPU layer cheaply, even
-   on a phone opened straight from a QR code.
+   Three large, heavily blurred blobs behind the menu, like warm
+   light from a lamp or small stage reaching different parts of
+   a dark room. Each blob has its own slow autonomous drift, and
+   the whole layer also gets a gentle parallax nudge tied to
+   scroll position (see script.js) — a slower background offset
+   than the foreground content, not a literal spotlight. Only
+   transform/opacity are animated so the browser can composite
+   each blob on its own GPU layer cheaply, even on a phone
+   opened straight from a QR code. The container's own transform
+   (scroll-driven, via --scroll-shift) and each span's transform
+   (autonomous drift) live on different elements, so they compose
+   without fighting the CSS cascade.
    --------------------------------------------------------- */
 .ambient-light {
   position: fixed;
@@ -90,12 +96,14 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  transform: translateY(var(--scroll-shift, 0px));
+  will-change: transform;
 }
 
 .ambient-light span {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
+  filter: blur(65px);
   will-change: transform, opacity;
 }
 
@@ -104,8 +112,8 @@ body {
   left: 8%;
   width: 58vw;
   height: 58vw;
-  background: radial-gradient(circle, rgba(213, 138, 58, 0.32), transparent 70%);
-  animation: driftAmber 26s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(213, 138, 58, 0.4), transparent 70%);
+  animation: driftAmber 16s ease-in-out infinite;
 }
 
 .ambient-light span:nth-child(2) {
@@ -113,8 +121,8 @@ body {
   right: 2%;
   width: 66vw;
   height: 66vw;
-  background: radial-gradient(circle, rgba(100, 31, 31, 0.36), transparent 70%);
-  animation: driftBurgundy 32s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(100, 31, 31, 0.44), transparent 70%);
+  animation: driftBurgundy 20s ease-in-out infinite;
 }
 
 .ambient-light span:nth-child(3) {
@@ -122,23 +130,23 @@ body {
   left: -14%;
   width: 50vw;
   height: 50vw;
-  background: radial-gradient(circle, rgba(168, 70, 36, 0.3), transparent 70%);
-  animation: driftRed 24s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(168, 70, 36, 0.38), transparent 70%);
+  animation: driftRed 14s ease-in-out infinite;
 }
 
 @keyframes driftAmber {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
-  50% { transform: translate(5%, 7%) scale(1.12); opacity: 0.85; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate(6%, 8%) scale(1.15); opacity: 0.95; }
 }
 
 @keyframes driftBurgundy {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  50% { transform: translate(-6%, -4%) scale(1.1); opacity: 0.9; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50% { transform: translate(-7%, -5%) scale(1.12); opacity: 1; }
 }
 
 @keyframes driftRed {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-  50% { transform: translate(4%, -6%) scale(1.15); opacity: 0.8; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.45; }
+  50% { transform: translate(5%, -7%) scale(1.18); opacity: 0.9; }
 }
 
 /* Subtle vignette: darkens the far edges of the viewport so
@@ -580,6 +588,10 @@ body {
   .cocktail-list {
     animation: none;
     opacity: 1;
+    transform: none;
+  }
+
+  .ambient-light {
     transform: none;
   }
 
