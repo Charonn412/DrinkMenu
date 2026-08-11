@@ -15,8 +15,16 @@
 </head>
 <body>
 
-  <div class="grain"></div>
-  <div class="vignette"></div>
+  <!-- Atmosphere layers: animated ambient light sits lowest, then
+       grain and exposure texture, then the edge vignette on top. -->
+  <div class="ambient-light" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="exposure" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
 
   <main class="menu">
 
@@ -59,7 +67,7 @@
         <p class="cocktail__meta"><span>Three Coffee Beans</span></p>
       </article>
 
-      <article class="cocktail">
+      <article class="cocktail cocktail--red-dose" id="the-red-dose">
         <p class="cocktail__number">04</p>
         <h2 class="cocktail__name">The Red Dose</h2>
         <p class="cocktail__type">Raspberry Champagne Cocktail</p>
@@ -79,5 +87,6 @@
 
   </main>
 
+  <script src="script.js" defer></script>
 </body>
 </html>

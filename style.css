@@ -22,6 +22,7 @@
   --color-cream: #F3E8D2;        /* primary headings/text */
   --color-cream-muted: #CDBFA8;  /* secondary/body text */
   --color-black: #0A0807;        /* deepest shadow tone */
+  --color-raspberry: #8C2233;    /* The Red Dose diffusion accent only */
 
   /* ---------------------------------------------------------
      TYPOGRAPHY
@@ -60,15 +61,84 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 
-  /* Layered radial gradients create a low, warm glow drifting
-     up from the center-bottom of the page, like lounge lighting,
-     without becoming a busy or distracting background. */
+  /* Static base glow (the animated warm light lives in the
+     separate .ambient-light layer below), plus a second layer
+     that scrolls WITH the page content — since it is sized to
+     the full document height, different stops of it come into
+     view as the guest scrolls, producing an extremely gradual
+     top-to-bottom darkening with zero JavaScript. */
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% 8%, rgba(213, 138, 58, 0.14), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(168, 70, 36, 0.16), transparent 65%),
-    radial-gradient(ellipse 100% 60% at 50% 50%, var(--color-bg-deep-red), var(--color-bg-darkest) 70%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+    radial-gradient(ellipse 100% 60% at 50% 50%, var(--color-bg-deep-red), var(--color-bg-darkest) 70%),
+    linear-gradient(to bottom, rgba(69, 21, 21, 0) 0%, rgba(69, 21, 21, 0.22) 45%, rgba(10, 8, 7, 0.6) 100%);
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, scroll;
+  background-size: auto, 100% 100%;
+}
+
+/* ---------------------------------------------------------
+   AMBIENT LIGHT
+   Three large, heavily blurred blobs drifting extremely slowly
+   behind the menu, like warm light from a lamp or small stage
+   reaching different parts of a dark room. Only transform and
+   opacity are animated (no blur/size animation) so the browser
+   can composite each blob on its own GPU layer cheaply, even
+   on a phone opened straight from a QR code.
+   --------------------------------------------------------- */
+.ambient-light {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-light span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform, opacity;
+}
+
+.ambient-light span:nth-child(1) {
+  top: -12%;
+  left: 8%;
+  width: 58vw;
+  height: 58vw;
+  background: radial-gradient(circle, rgba(213, 138, 58, 0.32), transparent 70%);
+  animation: driftAmber 26s ease-in-out infinite;
+}
+
+.ambient-light span:nth-child(2) {
+  bottom: -18%;
+  right: 2%;
+  width: 66vw;
+  height: 66vw;
+  background: radial-gradient(circle, rgba(100, 31, 31, 0.36), transparent 70%);
+  animation: driftBurgundy 32s ease-in-out infinite;
+}
+
+.ambient-light span:nth-child(3) {
+  top: 32%;
+  left: -14%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(168, 70, 36, 0.3), transparent 70%);
+  animation: driftRed 24s ease-in-out infinite;
+}
+
+@keyframes driftAmber {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+  50% { transform: translate(5%, 7%) scale(1.12); opacity: 0.85; }
+}
+
+@keyframes driftBurgundy {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  50% { transform: translate(-6%, -4%) scale(1.1); opacity: 0.9; }
+}
+
+@keyframes driftRed {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate(4%, -6%) scale(1.15); opacity: 0.8; }
 }
 
 /* Subtle vignette: darkens the far edges of the viewport so
@@ -82,7 +152,9 @@ body {
 }
 
 /* Faint grain/noise layer for texture, built entirely from
-   CSS (no image asset) using stacked, offset radial dots. */
+   CSS (no image asset) using stacked, offset radial dots. The
+   position jitters in discrete steps (rather than gliding) to
+   read as film-frame noise instead of a sliding texture. */
 .grain {
   position: fixed;
   inset: -10%;
@@ -94,6 +166,36 @@ body {
     radial-gradient(rgba(243, 232, 210, 0.9) 0.5px, transparent 0.5px);
   background-size: 3px 3px, 5px 5px;
   background-position: 0 0, 2px 3px;
+  animation: grainJitter 9s steps(8) infinite;
+}
+
+@keyframes grainJitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1%, 1%); }
+  50% { transform: translate(1%, -1%); }
+  75% { transform: translate(-0.6%, 0.6%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Near-imperceptible brightness variation, mimicking the
+   tiny exposure inconsistencies of old film stock rather than
+   an obvious flicker. Peak opacity stays under 3%. */
+.exposure {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: var(--color-black);
+  opacity: 0;
+  animation: exposureDrift 11s ease-in-out infinite;
+}
+
+@keyframes exposureDrift {
+  0%, 100% { opacity: 0; }
+  20% { opacity: 0.015; }
+  45% { opacity: 0.03; }
+  70% { opacity: 0.01; }
+  85% { opacity: 0.022; }
 }
 
 /* ---------------------------------------------------------
@@ -157,6 +259,43 @@ body {
 }
 
 /* ---------------------------------------------------------
+   EDITORIAL ENTRANCE
+   A single restrained reveal sequence on page load, like the
+   opening titles of a quiet jazz film: CLUB 24, then the
+   subtitle line, then the divider extends, then the menu
+   content settles into place. ~2.1s total, opacity + a few
+   pixels of vertical movement only, no bounce or overshoot.
+   --------------------------------------------------------- */
+@keyframes clubFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-header__eyebrow,
+.menu-header__title {
+  animation: clubFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.menu-header__title {
+  animation-delay: 0.15s;
+}
+
+.menu-header__subtitle,
+.menu-header__tagline {
+  animation: clubFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
+}
+
+.cocktail-list {
+  animation: clubFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both;
+}
+
+/* ---------------------------------------------------------
    DECORATIVE DIVIDER
    A thin gold rule with a small centered ornamental mark —
    restrained, not a flourish-heavy graphic.
@@ -195,6 +334,24 @@ body {
 .divider--small {
   max-width: 120px;
   margin: 0 auto 1.25rem;
+}
+
+/* Header divider extends outward from center as its step in
+   the entrance sequence; the small footer divider is below the
+   fold at load and stays static. */
+@keyframes dividerExtend {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.menu-header .divider {
+  animation: dividerExtend 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.05s both;
 }
 
 /* ---------------------------------------------------------
@@ -290,6 +447,51 @@ body {
 }
 
 /* ---------------------------------------------------------
+   THE RED DOSE — RASPBERRY DIFFUSION
+   References the syringe-served raspberry syrup blooming
+   through the cocktail without literally animating a syringe:
+   a soft, blurred raspberry bloom behind the card, triggered
+   once the section is well into view (see script.js). Sits at
+   z-index -1 within the article's own stacking context, so it
+   renders behind the text automatically.
+   --------------------------------------------------------- */
+.cocktail--red-dose::before {
+  content: '';
+  position: absolute;
+  inset: -12% -8%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 34, 51, 0.55), rgba(69, 21, 21, 0.28) 45%, transparent 72%);
+  filter: blur(28px);
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+
+.cocktail--red-dose.is-blooming::before {
+  animation: raspberryBloom 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes raspberryBloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  35% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  60% {
+    opacity: 0.38;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.12;
+    transform: scale(1);
+  }
+}
+
+/* ---------------------------------------------------------
    FOOTER
    --------------------------------------------------------- */
 .menu-footer {
@@ -349,16 +551,60 @@ body {
   }
 
   /* Restrained desktop-only hover interaction: the drink
-     name shifts slightly and warms in color, and its divider
-     glow strengthens — nothing bouncy or playful. */
+     name shifts slightly and warms in color — nothing bouncy
+     or playful. */
   .cocktail:hover .cocktail__name {
     color: var(--color-amber);
-    transform: translateX(3px);
+    transform: translateX(2px);
   }
 }
 
 @media (min-width: 1000px) {
   :root {
     --menu-max-width: 940px;
+  }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   Every animated layer added above is decorative. With this
+   preference set, all of it stops and the page falls back to
+   its plain, fully visible, statically styled state.
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .menu-header__eyebrow,
+  .menu-header__title,
+  .menu-header__subtitle,
+  .menu-header__tagline,
+  .menu-header .divider,
+  .cocktail-list {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .ambient-light span {
+    animation: none;
+    opacity: 0.35;
+    transform: none;
+  }
+
+  .grain {
+    animation: none;
+  }
+
+  .exposure {
+    animation: none;
+    opacity: 0;
+  }
+
+  .cocktail--red-dose.is-blooming::before {
+    animation: none;
+    opacity: 0.12;
+    transform: scale(1);
+  }
+
+  .cocktail:hover .cocktail__name {
+    transform: none;
   }
 }
