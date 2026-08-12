@@ -22,7 +22,6 @@
   --color-cream: #F3E8D2;        /* primary headings/text */
   --color-cream-muted: #CDBFA8;  /* secondary/body text */
   --color-black: #0A0807;        /* deepest shadow tone */
-  --color-raspberry: #8C2233;    /* The Red Dose diffusion accent only */
 
   /* ---------------------------------------------------------
      TYPOGRAPHY
@@ -455,51 +454,6 @@ body {
 }
 
 /* ---------------------------------------------------------
-   THE RED DOSE — RASPBERRY DIFFUSION
-   References the syringe-served raspberry syrup blooming
-   through the cocktail without literally animating a syringe:
-   a soft, blurred raspberry bloom behind the card, triggered
-   once the section is well into view (see script.js). Sits at
-   z-index -1 within the article's own stacking context, so it
-   renders behind the text automatically.
-   --------------------------------------------------------- */
-.cocktail--red-dose::before {
-  content: '';
-  position: absolute;
-  inset: -12% -8%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(140, 34, 51, 0.55), rgba(69, 21, 21, 0.28) 45%, transparent 72%);
-  filter: blur(28px);
-  opacity: 0;
-  transform: scale(0.4);
-  pointer-events: none;
-}
-
-.cocktail--red-dose.is-blooming::before {
-  animation: raspberryBloom 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes raspberryBloom {
-  0% {
-    opacity: 0;
-    transform: scale(0.35);
-  }
-  35% {
-    opacity: 0.55;
-    transform: scale(0.85);
-  }
-  60% {
-    opacity: 0.38;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 0.12;
-    transform: scale(1);
-  }
-}
-
-/* ---------------------------------------------------------
    FOOTER
    --------------------------------------------------------- */
 .menu-footer {
@@ -552,9 +506,11 @@ body {
     padding: 2.5rem 0;
   }
 
-  /* With five items in the two-column grid, only the final row
-     (item 5, alone in column 1) should lose its bottom rule —
-     the base :last-child rule already covers that. */
+  /* Remove the bottom rule from the last row of the two-column
+     grid rather than only the last item overall. */
+  .cocktail:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
 
   /* Restrained desktop-only hover interaction: the drink
      name shifts slightly and warms in color — nothing bouncy
@@ -606,12 +562,6 @@ body {
   .exposure {
     animation: none;
     opacity: 0;
-  }
-
-  .cocktail--red-dose.is-blooming::before {
-    animation: none;
-    opacity: 0.12;
-    transform: scale(1);
   }
 
   .cocktail:hover .cocktail__name {
