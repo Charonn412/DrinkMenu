@@ -454,6 +454,17 @@ body {
 }
 
 /* ---------------------------------------------------------
+   SECRET DRINK
+   Deliberately incomplete: no ingredients line, a dimmer and
+   italicized name instead of the usual bright display serif.
+   The gap reads as withheld information rather than a mistake.
+   --------------------------------------------------------- */
+.cocktail--secret .cocktail__name {
+  color: var(--color-cream-muted);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------
    FOOTER
    --------------------------------------------------------- */
 .menu-footer {
@@ -506,11 +517,9 @@ body {
     padding: 2.5rem 0;
   }
 
-  /* Remove the bottom rule from the last row of the two-column
-     grid rather than only the last item overall. */
-  .cocktail:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
+  /* With five items in the two-column grid, only the final row
+     (the secret drink, alone in column 1) loses its bottom
+     rule — the base :last-child rule already covers that. */
 
   /* Restrained desktop-only hover interaction: the drink
      name shifts slightly and warms in color — nothing bouncy
