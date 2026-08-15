@@ -517,9 +517,9 @@ body {
     padding: 2.5rem 0;
   }
 
-  /* With five items in the two-column grid, only the final row
-     (the secret drink, alone in column 1) loses its bottom
-     rule — the base :last-child rule already covers that. */
+  /* With an odd number of items in the two-column grid, only
+     the final row (the secret drink, alone in column 1) loses
+     its bottom rule — the base :last-child rule covers that. */
 
   /* Restrained desktop-only hover interaction: the drink
      name shifts slightly and warms in color — nothing bouncy
